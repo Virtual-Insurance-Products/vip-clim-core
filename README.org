@@ -1,0 +1,101 @@
+#+TITLE: vip-clim-core
+
+* Introduction
+This package is an incomplete and approximately compatible
+implementation of some parts of the [[http://bauhh.dyndns.org:8000/clim-spec/index.html][CLIM II Specification]] which is
+used at VIP Ltd for developing web applications. Compared to other
+CLIM implementations this one is probably a little idiosyncratic. It
+generally tries to behave more or less like standard CLIM
+though. Since this project was started several years ago McCLIM, in
+particular, has seen a lot more development than it had for many years
+previously, and it might well be worth considering importing some, or
+all, of that project to replace this. However, there are some
+differences (and particularly in clim-web) in order to make web based
+applications. 
+
+Broadly speaking this package (vip-clim-core) implements:-
+1. Definition of presentation types including ~presentation-typep~ and ~presentation-subtypep~
+2. A collection of presentation types
+3. An accept mechanism which can accept things from streams and /also/
+   from strings using the simple-parser.asd library
+4. Definition of presentation methods
+5. Various ~present~ and ~accept~ methods operating on simple data
+   types.
+6. Command tables and command definition
+
+The following presentation methods can be defined:-
+
+#+begin_src lisp
+(define-presentation-method presentation-typep (object type) ...)
+(define-presentation-method presentation-subtypep (type putative-supertype) ...)
+(define-presentation-method present (object type stream view &key acceptably) ...)
+(define-presentation-method default-view-for-object (object type stream) ...)
+
+(define-presentation-method accept (type stream view &key error-if-not-eof) ...)
+(define-presentation-method default-view-for-accepting (type stream &key name) ...)
+
+(define-presentation-method type-for-subtype-tests (type) ...)
+
+#+end_src
+
+
+* Differences
+** Commands
+It seemed useful for CLIM commands to be able to return values. This
+probably doesn't make sense in 'standard' CLIM, as the user interface
+will be repainted every time a command is executed. With web
+applications we found it very useful at times to have commands which
+just display some information in a popup on the screen. 
+
+** type-for-subtype-tests
+Consider the situation where a command operates on integers between
+(say) 1 and 10. Now, if you do this:-
+
+~(present 4 'integer)~ 
+
+When CLIM is determining whether a command should operate on that
+value it will check BOTH:-
+1. Whether the object satisfies the parameter type of the command
+2. Whether the objects declared presentation type (here integer) is a
+   subtype of the type of the command parameter (~(integer 1 10)~). 
+
+Clearly the second check will fail in this example. It makes sense
+that if the command accepted a parameter of type ~(currency :gbp)~ for
+example, then it can't accept an arbitrary numbre - only a sterling
+amount - but in this case it doesn't seem to be doing the right thing.
+
+Because of this problem cropping up I implement the following (for
+example):-
+#+begin_src lisp
+(define-presentation-method type-for-subtype-tests ((type number))
+  (with-presentation-type-decoded (name)
+      type
+    name))
+#+end_src
+
+This tells lisp that when considering a type to use for subtype tests
+for any number type we should ignore the parameters, which narrow the
+type. There are a few implementations of this method here.  
+
+** Applications
+There is no concept of an application frame here.
+
+** Nested Commands
+Since commands can have return values here, it makes sense to be able
+to accept, in place of a command parameter, a nested command
+invocation which returns a suitable value for the parameter. This
+means we could, for example, have a command for approving a policy
+which takes an approval date which would work like this:-
+
+~Command: Approve Policy 12345 Now~
+
+... where ~Now~ is a command returning the current time. This seemed
+useful. There would be other ways of doing this (certainly 'Now' could
+be a valid way of specifying a time for ~#'accept~, but this can be
+extended to many other things. 
+
+Nested commands are implemented in the accept mechanism. Of course,
+what works for accepting depends on the current (dynamically bound)
+command table. 
+
+
