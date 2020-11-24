@@ -4,7 +4,6 @@
 (asdf:defsystem #:vip-clim-core
   :description "CLIM presentation types"
   :author "VIP"
-  :license "vip"
   :depends-on ("cybertiggyr-time" "simple-parser" "cl-ppcre" "vip-utils" "anaphors" "event-handlers" "cl-json")
   ;; :serial t
   :components ((:file "package")
