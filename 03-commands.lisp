@@ -295,8 +295,6 @@
 ;; now I can define commands like this...
 
 ;; This is supposed to handle testing pre and post conditions
-;; it should, no doubt, also generate a DB transaction when we get to that.
-;; ... TBC
 (defmacro define-command
     ((symbol-name &key command-table
                        (name (error "Please specify a command name"))
