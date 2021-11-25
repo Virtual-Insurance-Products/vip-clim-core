@@ -82,6 +82,8 @@
 
            #:one-of
            #:has
+
+           #:*unsupplied-argument-marker*
            )
   ;; (:import-from fare-matcher match ematch)
   )

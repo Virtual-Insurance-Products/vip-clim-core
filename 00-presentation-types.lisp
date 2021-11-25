@@ -3,8 +3,10 @@
 
 (in-package :clim-internals)
 
-(defparameter *incomplete-command-marker* (gensym "INCOMPLETE"))
+(defvar *incomplete-command-marker* (gensym "INCOMPLETE"))
 
+;; This is what the above was *supposed* to be called (http://bauhh.dyndns.org:8000/clim-spec/27-6.html#_1448)
+(defvar *unsupplied-argument-marker* *incomplete-command-marker*)
 
 
 ;; In cases where we would like to know which component of some typespec failed (presuming we expected the type check to succeed) it can be useful to be able to catch a more specific reason as to why the type failed
