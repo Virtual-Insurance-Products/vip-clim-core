@@ -198,9 +198,13 @@ missing options and nil options."
 ;; type checker for clos instances w/o a specific type defined here...
 (define-presentation-method presentation-typep (object (type standard-object))
   ;; only the name can be given in this case
-  (with-presentation-type-decoded (name)
+  ;; BUT we /could/ have something which also names a #'typep typespec with parameters
+  ;; no one is going to include parameters if it isn't valid to do that anyway. 
+  (with-presentation-type-decoded (name params)
       type
-    (typep object name)))
+    (if params
+        (typep object (cons name params))
+        (typep object name))))
 
 
 ;; We need to allow a type to supply a different type when subtype tests are required
