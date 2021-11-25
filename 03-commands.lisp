@@ -297,11 +297,25 @@
 ;; This is supposed to handle testing pre and post conditions
 ;; it should, no doubt, also generate a DB transaction when we get to that.
 ;; ... TBC
-(defmacro define-command ((symbol-name &key command-table (name (error "Please specify a command name"))
-                                       options
-                                       return-type)
-                                         parameters
-                          &body body)
+(defmacro define-command
+    ((symbol-name &key command-table
+                       (name (error "Please specify a command name"))
+                       options return-type)
+     parameters &body body)
+  ;; The argument presentation type is *supposed* to be evaluated as per
+  ;; the spec. To begin with I will /allow/ it to be quoted. This should
+  ;; be merged upstream too.
+  ;;
+  ;; Ideally the values of all the parameters which are known are
+  ;; supposed to be available when evaluating the types of the others,
+  ;; but how to do that in the current framework I don't know.
+  (setf parameters
+        (loop for (arg-name ptype . options) in parameters
+              for new-ptype = (if (and (listp ptype)
+                                       (eq (first ptype) 'quote))
+                                  (second ptype)
+                                  ptype)
+              collect (list* arg-name new-ptype options)))
   `(progn
      (defun ,symbol-name ,(mapcar (lambda (x)
                                     (if (listp x)
@@ -310,11 +324,6 @@
        ,@body)
      (add-command (make-instance 'command-table-entry
                                  :action ',symbol-name
-                                 #+nil(lambda ,(mapcar (lambda (x)
-                                                         (if (listp x)
-                                                             (first x) x))
-                                                       parameters)
-                                        ,@body)
                                  :parameters (quote ,parameters)
                                  :name ,name
                                  :symbol-name ',symbol-name
