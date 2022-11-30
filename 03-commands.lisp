@@ -1,5 +1,5 @@
 
-(in-package :clim-internals)
+(in-package :climwi)
 
 ;; QUESTION: Should I change this to conform more closely to the CLIM specification?
 
@@ -453,7 +453,7 @@
 
 
 (defmacro define-presentation-translator (name (from-type to-type command-table) arglist &body body)
-  `(setf (gethash ',name (clim-internals::presentation-translators ,command-table))
+  `(setf (gethash ',name (climwi::presentation-translators ,command-table))
          (list ',from-type
                ',to-type
                (lambda ,arglist

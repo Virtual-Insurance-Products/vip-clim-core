@@ -1,5 +1,5 @@
 
-(in-package :clim-internals)
+(in-package :climwi)
 
 
 ;; Extra useful things...
@@ -81,11 +81,11 @@
   (typep object `(rational ,low ,high)))
 
 
-#+nil(clim-internals::funcall-presentation-generic-function
+#+nil(climwi::funcall-presentation-generic-function
       presentation-subtypep '(currency :gbp)
       '(currency :gbp))
 
-#+nil(clim-internals::funcall-presentation-generic-function
+#+nil(climwi::funcall-presentation-generic-function
       presentation-subtypep '(currency :gbp 1 20)
       '(currency :gbp 1 10))
 
@@ -255,7 +255,7 @@
                          (or (presentation-typep object parameter)
                              (and (listp object)
                                   (eq (first object)
-                                      clim-internals::*incomplete-command-marker*))))
+                                      climwi::*incomplete-command-marker*))))
                        object
                        (mapcar (lambda (spec)
                                  (replace-typespec-named-definitions spec names))
@@ -294,11 +294,11 @@
   (loop for (x . r) on object
      for type in ??parameters
        when (and (listp x)
-                 (eq (first x) clim-internals::*incomplete-command-marker*)
+                 (eq (first x) climwi::*incomplete-command-marker*)
                  (not (typespec-option-p (second x) :default)))
      do (return-from present nil)
      do (if (and (listp x)
-                 (eq (first x) clim-internals::*incomplete-command-marker*))
+                 (eq (first x) climwi::*incomplete-command-marker*))
             (progn
               (write-sequence "#?" stream)
               (present (typespec-option (second x) :default) type :stream stream

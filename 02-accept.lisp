@@ -1,5 +1,5 @@
 
-(in-package :clim-internals)
+(in-package :climwi)
 
 (defparameter *delimiter-gestures* :eof)
 
@@ -107,7 +107,7 @@
   
   ;; establishing this dynamic binding here should be the standard thing to do in stream-accept
   (let ((*delimiter-gestures* delimiter-gestures))
-    (clim-internals::funcall-presentation-generic-function
+    (climwi::funcall-presentation-generic-function
      accept type stream view :error-if-not-eof error-if-not-eof
      :default default)))
 

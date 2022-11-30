@@ -1,12 +1,12 @@
 
-(in-package :clim-internals)
+(in-package :climwi)
 
 ;; functions needed by macros...
 
 
 ;; !!! Should error if not found
 (defun presentation-method-internal-name (name)
-  (intern (format nil "%~A" name) :clim-internals))
+  (intern (format nil "%~A" name) :climwi))
 
 ;; (presentation-method-internal-name 'accept)
 
@@ -46,7 +46,7 @@
 ;; I don't know why this looks exactly like it does, but it doesn't really matter
 ;; !!! UNUSED
 (defun type-key-name (typespec)
-  (intern (format nil "(presentation-type ~A)" (%typespec-name typespec)) :clim-internals))
+  (intern (format nil "(presentation-type ~A)" (%typespec-name typespec)) :climwi))
 ;; (type-key-name 'integer)
 
 (defconstant standard-lambda-list-keywords 
@@ -93,7 +93,7 @@
       spec))
 
 (defun %typespec-presentation-class-name (spec)
-  (intern (concatenate 'string (symbol-name (%typespec-name spec)) "-TYPE") :clim-internals))
+  (intern (concatenate 'string (symbol-name (%typespec-name spec)) "-TYPE") :climwi))
 
 ;; (%typespec-presentation-class-name '(integer 1 10))
 

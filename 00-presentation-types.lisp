@@ -1,7 +1,7 @@
 
 
 
-(in-package :clim-internals)
+(in-package :climwi)
 
 (defparameter *incomplete-command-marker* (gensym "INCOMPLETE"))
 
