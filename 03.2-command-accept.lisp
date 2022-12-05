@@ -1,5 +1,5 @@
 
-(in-package :clim-internals)
+(in-package :climwi)
 
 
 ;; Accept commands
@@ -64,7 +64,7 @@
         (add-incomplete-markers
          (cons (command-symbol-name cte)
                (with-presentation-type-decoded (name params)
-                   (clim-internals::command-parameters-type cte)
+                   (climwi::command-parameters-type cte)
                  (declare (ignore name))
                  (loop for param in params
                     for arg in (cdr it)

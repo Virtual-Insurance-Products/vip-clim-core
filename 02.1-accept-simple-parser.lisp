@@ -1,5 +1,5 @@
 
-(in-package :clim-internals)
+(in-package :climwi)
 
 
 ;; So, here we define stream-accept for strings to use the simple parser...
@@ -35,8 +35,8 @@
             (subseq simple-parser:*parser-input-string*
                     simple-parser:*parser-input-position*)))
   
-  (let ((result (let ((clim-internals::*delimiter-gestures* delimiter-gestures))
-                  (clim-internals::funcall-presentation-generic-function
+  (let ((result (let ((climwi::*delimiter-gestures* delimiter-gestures))
+                  (climwi::funcall-presentation-generic-function
                    accept type :simple-parser view))))
     (when *debug-parser*
       (format *standard-output*
@@ -65,9 +65,9 @@
 ;; Whilst this may seem pointless, it is provided so that :around methods can do things based on metaclass etc
 ;; (see cldb.lisp)
 (define-parser-acceptor t
-  (error 'ccl::no-applicable-method-exists :gf #'clim-internals::%accept
-                                           :args (list clim-internals::type-key stream clim-internals::view
-                                                       clim-internals::error-if-not-eof)))
+  (error 'ccl::no-applicable-method-exists :gf #'climwi::%accept
+                                           :args (list climwi::type-key stream climwi::view
+                                                       climwi::error-if-not-eof)))
 
 ;; !!! Need a lot more of these
 (define-parser-acceptor integer
@@ -82,7 +82,7 @@
 
 ;; we can easily do things like this...
 (define-parser-acceptor (type list)
-  (let ((first (accept clim-internals::?element-type
+  (let ((first (accept climwi::?element-type
                        :stream stream :view view
                        :delimiter-gestures (or (typespec-option type :delimiter-gestures)
                                                (cond ((equal separator ", ")
@@ -95,7 +95,7 @@
              (list first))
         ;; There should be something for describing presentation types
         ;; which looks at the label where supplied and 
-        ;; (sp-error "Expected ~A here: " clim-internals::?element-type)
+        ;; (sp-error "Expected ~A here: " climwi::?element-type)
         )))
 
 ;; This gives us considerable flexibility to do these sorts of things:-
@@ -136,7 +136,7 @@
                             (quote-meta-chars (map 'string #'identity delimiters))))))
 
     ;; only when the delimiter gestures are :eof do we NOT do the escapes. With space as a delimiter gesture we can use \ to escape a space
-    (cond ((eq clim-internals::*delimiter-gestures* :eof)
+    (cond ((eq climwi::*delimiter-gestures* :eof)
            (sp-scan "^(?:.|\\s)+"))
           ;; if we get a single or double quote then read up to the close one...
           ((sp-next-char-is #\')
@@ -156,8 +156,8 @@
              (unescape string)))
 
           ;; otherwise we presume that there is some set of delimiters, which are characters, up to which we will read, but we don't mind if we don't find those delimiters and in this case we will read to EOF
-          (clim-internals::*delimiter-gestures*
-           (let ((string (read-to-delimiter clim-internals::*delimiter-gestures*)))
+          (climwi::*delimiter-gestures*
+           (let ((string (read-to-delimiter climwi::*delimiter-gestures*)))
              (when (and string
                         (not (equal string "")))
                (unescape string))))
@@ -190,15 +190,15 @@
 
 
 (define-parser-acceptor or
-  (when clim-internals::??c
-    (or (accept (first clim-internals::??c) :stream :simple-parser)
-        (accept `(or ,@(cdr clim-internals::??c)) :stream :simple-parser))))
+  (when climwi::??c
+    (or (accept (first climwi::??c) :stream :simple-parser)
+        (accept `(or ,@(cdr climwi::??c)) :stream :simple-parser))))
 
 ;; If we didn't have sp-try we could just have this error when the accepted value isn't right
 ;; that might be better really
 (define-parser-acceptor (type and)
   (sp-try (lambda ()
-            (awhen (accept (first clim-internals::??c) :stream :simple-parser)
+            (awhen (accept (first climwi::??c) :stream :simple-parser)
               (when (presentation-typep it type)
                 it)))))
 
@@ -226,7 +226,7 @@
                         (sp-scan "^\\#\\?"))
                    ;; generate a defaulted incomplete marker
                    (let ((r (read-parameters p :first t :first-required t)))
-                     (cons (list clim-internals::*incomplete-command-marker*
+                     (cons (list climwi::*incomplete-command-marker*
                                  (with-presentation-type-decoded (name params opts)
                                      (first p)
                                    `((,name ,@params) :default ,(first r) ,@opts)))
@@ -242,10 +242,10 @@
                             (cons x (read-parameters (cdr p))))
                            ((and (sp-eof)
                                  incomplete-marker)
-                            (cons (list clim-internals::*incomplete-command-marker* (first p))
+                            (cons (list climwi::*incomplete-command-marker* (first p))
                                   (read-parameters (cdr p))))
                            ((and expected incomplete-marker)
-                            (list clim-internals::*incomplete-command-marker*))
+                            (list climwi::*incomplete-command-marker*))
                            ((and first (not expected))
                             nil)        ; fail the whole thing
                            (t (sp-error "Expected parameter of type ~S here" (first p)))))))))

@@ -1,5 +1,5 @@
 
-(in-package :clim-internals)
+(in-package :climwi)
 
 
 (defmacro with-presentation-type-decoded ((name &optional parameters options) type &body body)
@@ -142,7 +142,7 @@ ignore this and return the third member. "
                                  for type-param-p = (= i (type-arg-position name))
                                  when type-param-p
                                  do (setf type-key-arg
-                                          (list 'clim-internals::type-key
+                                          (list 'climwi::type-key
                                                 ;; !!! But this is supposed to be quite a different symbol...
                                                 ;; (it doesn't matter because the things which calls %accept takes care of it)
                                             
