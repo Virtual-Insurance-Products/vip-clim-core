@@ -2,7 +2,7 @@
 (in-package :cl-user)
 
 ;; !!! The package definition should be moved elsewhere
-(defpackage #:clim-web-internals
+(defpackage #:climwi
   (:nicknames #:climwi)
   (:use :common-lisp :cl-ppcre :vip-utils :simple-parser :anaphors)
   (:export #:define-presentation-method
