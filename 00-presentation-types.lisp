@@ -3,8 +3,10 @@
 
 (in-package :climwi)
 
-(defparameter *incomplete-command-marker* (gensym "INCOMPLETE"))
+(defvar *incomplete-command-marker* (gensym "INCOMPLETE"))
 
+;; This is what the above was *supposed* to be called (http://bauhh.dyndns.org:8000/clim-spec/27-6.html#_1448)
+(defvar *unsupplied-argument-marker* *incomplete-command-marker*)
 
 
 ;; In cases where we would like to know which component of some typespec failed (presuming we expected the type check to succeed) it can be useful to be able to catch a more specific reason as to why the type failed
@@ -196,9 +198,13 @@ missing options and nil options."
 ;; type checker for clos instances w/o a specific type defined here...
 (define-presentation-method presentation-typep (object (type standard-object))
   ;; only the name can be given in this case
-  (with-presentation-type-decoded (name)
+  ;; BUT we /could/ have something which also names a #'typep typespec with parameters
+  ;; no one is going to include parameters if it isn't valid to do that anyway. 
+  (with-presentation-type-decoded (name params)
       type
-    (typep object name)))
+    (if params
+        (typep object (cons name params))
+        (typep object name))))
 
 
 ;; We need to allow a type to supply a different type when subtype tests are required
